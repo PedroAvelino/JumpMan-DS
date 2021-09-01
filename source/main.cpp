@@ -5,13 +5,14 @@
 
 
 #include "Boxxy.hpp"
+#include "Wall.hpp"
 int main(void)
 {
-    Boxxy* boxxy = new Boxxy();
-
     std::vector<Entity*> entities;
 
-    entities.push_back(boxxy);
+    entities.push_back(new Boxxy()); //Create a new box
+    entities.push_back(new Wall( true )); //Create left wall
+    entities.push_back(new Wall( false )); //Create right wall
     
     videoSetMode(MODE_5_3D);
     glScreen2D();
@@ -39,5 +40,8 @@ int main(void)
     }
     
 
-    delete boxxy;
+    for ( auto e : entities )
+    {
+        delete e;
+    }
 }

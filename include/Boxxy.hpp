@@ -13,11 +13,11 @@ class Boxxy : public Entity
 public:
     Boxxy(/* args */);
     ~Boxxy();
-    void Move( const Vector2& p_direction );
 
 public:
     virtual void Draw() override;
     virtual void Update() override;
+    virtual void Move( const Vector2& p_direction ) override;
 
 private:
     float speed;

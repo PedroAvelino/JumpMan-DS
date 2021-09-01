@@ -5,12 +5,14 @@ Boxxy::Boxxy()
 {
     pos.x = 10;
     pos.y = 10;
-    size = 24;
+
+    size.x = 24.0f;
+    size.y = 24.0f;
 }
 
 void Boxxy::Draw()
 {
-    glBoxFilled(pos.x, pos.y , (pos.x + size) , (pos.y + size) ,RGB15(202,137,240));
+    glBoxFilled(pos.x, pos.y , (pos.x + size.x) , (pos.y + size.y) ,RGB15(202,137,240));
 }
 
 void Boxxy::Move( const Vector2& p_direction )
@@ -35,6 +37,16 @@ void Boxxy::Update()
     if( held & KEY_RIGHT )
     {
         Move(Vector2(1.0, 0.0));
+    }
+
+    if( held & KEY_UP )
+    {
+        Move(Vector2(0.0, 1.0));
+    }
+
+    if( held & KEY_DOWN )
+    {
+        Move(Vector2(0.0, -1.0));
     }
 }
 
