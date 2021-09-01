@@ -1,0 +1,33 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "SDL2",
+			"command": "D:\\C++libs\\mingw64\\bin\\g++.exe",
+			"args": [
+				"-g",
+				"${fileDirname}\\*.cpp",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"-LD:\\C++libs\\SDL-w64\\lib",
+				"-LD:\\ConsoleLibs\\DevkitPro\\libnds\\lib",
+				"-ID:\\ConsoleLibs\\DevkitPro\\libnds\\include",
+				"-I${workspaceFolder}\\include",
+				"-lmingw32",
+				"-lSDL2main",
+				"-lSDL2",
+				"-lSDL2_image",
+				"-mwindows"
+			],
+			"options": {
+				"cwd": "D:\\C++libs\\mingw64\\bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compilador: D:\\C++libs\\mingw64\\bin\\g++.exe"
+		}
+	]
+}
