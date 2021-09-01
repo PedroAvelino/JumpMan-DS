@@ -41,12 +41,12 @@ void Boxxy::Update()
 
     if( held & KEY_UP )
     {
-        Move(Vector2(0.0, 1.0));
+        Move(Vector2(0.0, -1.0));
     }
 
     if( held & KEY_DOWN )
     {
-        Move(Vector2(0.0, -1.0));
+        Move(Vector2(0.0, 1.0));
     }
 }
 

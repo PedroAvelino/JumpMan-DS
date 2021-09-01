@@ -19010,7 +19010,7 @@ Linker script and memory map
                 0x0000000002000c98                Entity::Update()
                 0x0000000002000c98                Entity::Draw()
                 0x0000000002000c9c                Entity::Move(Vector2 const&)
-                0x0000000002000c9c                Entity::OnCollision(Entity&)
+                0x0000000002000c9c                Entity::OnCollision(Entity*)
                 0x0000000002000ca0                Entity::Entity()
                 0x0000000002000ca0                Entity::Entity()
                 0x0000000002000cb8                Entity::~Entity()
@@ -30599,32 +30599,32 @@ ARM.exidx       0x0000000002059e3c     0x12a8
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000    0x1ddd5
+.debug_info     0x0000000000000000    0x1ddc1
  *(.debug_info)
- .debug_info    0x0000000000000000     0x33ea Boxxy.o
- .debug_info    0x00000000000033ea     0x2f5a Coin.o
- .debug_info    0x0000000000006344     0x2952 Collectable.o
- .debug_info    0x0000000000008c96     0x2ce2 Entity.o
- .debug_info    0x000000000000b978     0x2daf Wall.o
- .debug_info    0x000000000000e727     0x5c27 main.o
- .debug_info    0x000000000001434e      0x79b D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(trig.o)
- .debug_info    0x0000000000014ae9     0x38ec D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(videoGL.o)
- .debug_info    0x00000000000183d5      0x466 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(keys.o)
- .debug_info    0x000000000001883b     0x12a5 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(initSystem.o)
- .debug_info    0x0000000000019ae0      0xa64 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(timeSupport.o)
- .debug_info    0x000000000001a544       0x59 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(securearea.o)
- .debug_info    0x000000000001a59d      0x68f D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(interrupts.o)
- .debug_info    0x000000000001ac2c      0x378 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(libnds_exit.arm.o)
- .debug_info    0x000000000001afa4     0x189c D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(fifosystem.o)
- .debug_info    0x000000000001c840       0x22 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(mpu_setup.o)
- .debug_info    0x000000000001c862       0x22 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(IntrWait.o)
- .debug_info    0x000000000001c884       0x26 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(cpu_clock.o)
- .debug_info    0x000000000001c8aa       0x26 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(interruptDispatcher.o)
- .debug_info    0x000000000001c8d0       0x26 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(swiSoftReset.o)
- .debug_info    0x000000000001c8f6       0x22 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(biosCalls.o)
- .debug_info    0x000000000001c918      0x273 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(dynamicArray.o)
- .debug_info    0x000000000001cb8b      0x7c5 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(video.o)
- .debug_info    0x000000000001d350      0xa85 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(system.o)
+ .debug_info    0x0000000000000000     0x33e5 Boxxy.o
+ .debug_info    0x00000000000033e5     0x2f55 Coin.o
+ .debug_info    0x000000000000633a     0x2952 Collectable.o
+ .debug_info    0x0000000000008c8c     0x2cdd Entity.o
+ .debug_info    0x000000000000b969     0x2daa Wall.o
+ .debug_info    0x000000000000e713     0x5c27 main.o
+ .debug_info    0x000000000001433a      0x79b D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(trig.o)
+ .debug_info    0x0000000000014ad5     0x38ec D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(videoGL.o)
+ .debug_info    0x00000000000183c1      0x466 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(keys.o)
+ .debug_info    0x0000000000018827     0x12a5 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(initSystem.o)
+ .debug_info    0x0000000000019acc      0xa64 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(timeSupport.o)
+ .debug_info    0x000000000001a530       0x59 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(securearea.o)
+ .debug_info    0x000000000001a589      0x68f D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(interrupts.o)
+ .debug_info    0x000000000001ac18      0x378 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(libnds_exit.arm.o)
+ .debug_info    0x000000000001af90     0x189c D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(fifosystem.o)
+ .debug_info    0x000000000001c82c       0x22 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(mpu_setup.o)
+ .debug_info    0x000000000001c84e       0x22 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(IntrWait.o)
+ .debug_info    0x000000000001c870       0x26 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(cpu_clock.o)
+ .debug_info    0x000000000001c896       0x26 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(interruptDispatcher.o)
+ .debug_info    0x000000000001c8bc       0x26 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(swiSoftReset.o)
+ .debug_info    0x000000000001c8e2       0x22 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(biosCalls.o)
+ .debug_info    0x000000000001c904      0x273 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(dynamicArray.o)
+ .debug_info    0x000000000001cb77      0x7c5 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(video.o)
+ .debug_info    0x000000000001d33c      0xa85 D:/ConsoleLibs/DevkitPro/libnds/lib\libnds9.a(system.o)
 
 .debug_abbrev   0x0000000000000000     0x4944
  *(.debug_abbrev)

@@ -15,7 +15,7 @@ void Coin::Update()
     
 }
 
-void Coin::OnCollision( Entity& p_entity )
+void Coin::OnCollision( Entity* p_entity )
 {
 
 }
