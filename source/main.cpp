@@ -18,13 +18,15 @@ void InitConsole()
 	consoleClear();		
 	NF_Set2D(0,0);
 	NF_SetRootFolder("NITROFS");
-}
+    
 
+    NF_InitSpriteBuffers();
+	NF_InitSpriteSys(0);
+}
 
 int main(void)
 {
-    // std::vector<Entity*> entities;
-    // entities.push_back(new Boxxy()); //Create a new box
+    std::vector<Entity*> entities;
     // entities.push_back(new Wall( true )); //Create left wall
     // entities.push_back(new Wall( false )); //Create right wall
     // entities.push_back(new Coin(Vector2(100, 0)));
@@ -33,14 +35,15 @@ int main(void)
     
     InitConsole();
 
+    entities.push_back(new Boxxy()); //Create a new box
 
     while (1)
     {
         scanKeys();
-        // for ( auto e : entities )
-        // {
-        //     e->Draw();
-        // }
+        for ( auto e : entities )
+        {
+            e->Draw();
+        }
 
         // for ( auto e : entities )
         // {
@@ -53,8 +56,8 @@ int main(void)
     }
     
 
-    // for ( auto e : entities )
-    // {
-    //     delete e;
-    // }
+    for ( auto e : entities )
+    {
+        delete e;
+    }
 }
