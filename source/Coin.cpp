@@ -1,8 +1,11 @@
 #include "Coin.hpp"
 
 Coin::Coin( const Vector2& p_spawnPos )
+:speed(2)
 {
     pos = p_spawnPos;
+    size.x = 10;
+    size.y = 10;
 }
 
 void Coin::Draw()
@@ -12,7 +15,7 @@ void Coin::Draw()
 
 void Coin::Update()
 {
-    
+    pos.y += speed;
 }
 
 void Coin::OnCollision( Entity* p_entity )

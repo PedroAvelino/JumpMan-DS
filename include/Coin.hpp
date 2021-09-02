@@ -18,6 +18,8 @@ public:
     virtual void Draw() override;
     virtual void Update() override;
     virtual void OnCollision( Entity* p_entity ) override;
+private:
+    float speed;
     
 };
 
