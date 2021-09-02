@@ -1,26 +1,75 @@
 #---------------------------------------------------------------------------------
-.SUFFIXES:
+# Makefile for NightFox's Lib Projects
 #---------------------------------------------------------------------------------
 
+
+
+#---------------------------------------------------------------------------------
+.SUFFIXES:
+#---------------------------------------------------------------------------------
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
-include $(DEVKITARM)/ds_rules
+
+#---------------------------------------------------------------------------------
+# This part substitutes this include:
+# include $(DEVKITARM)/ds_rules
+# This allows you to set ROM info and icon easy
+# Please update this block from DS_RULES file at every DEVKITARM update
+#---------------------------------------------------------------------------------
+include $(DEVKITARM)/base_rules
+
+LIBNDS	:=	$(DEVKITPRO)/libnds
+
+GAME_TITLE	    :=	Text 1
+GAME_SUBTITLE1	:=	Text 2
+GAME_SUBTITLE2	:=	Text 3
+GAME_ICON		:=	$(CURDIR)/../icon.bmp
+
+_ADDFILES	:=	-d $(NITRO_FILES)
+
+
+#---------------------------------------------------------------------------------
+%.nds: %.arm9
+	@ndstool -c $@ -9 $< -b $(GAME_ICON) "$(GAME_TITLE);$(GAME_SUBTITLE1);$(GAME_SUBTITLE2)" $(_ADDFILES)
+	@echo built ... $(notdir $@)
+
+#---------------------------------------------------------------------------------
+%.nds: %.elf
+	@ndstool -c $@ -9 $< -b $(GAME_ICON) "$(GAME_TITLE);$(GAME_SUBTITLE1);$(GAME_SUBTITLE2)" $(_ADDFILES)
+	@echo built ... $(notdir $@)
+
+#---------------------------------------------------------------------------------
+%.arm9: %.elf
+	@$(OBJCOPY) -O binary $< $@
+	@echo built ... $(notdir $@)
+
+#---------------------------------------------------------------------------------
+%.arm7: %.elf
+	@$(OBJCOPY) -O binary $< $@
+	@echo built ... $(notdir $@)
+
+#---------------------------------------------------------------------------------
+%.elf:
+	@echo linking $(notdir $@)
+	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
+
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
-# MAXMOD_SOUNDBANK contains a directory of music and sound effect files
+# DATA is a list of directories containing binary files embedded using bin2o
+# NITRODATA is the directory where files for NitroFS will be placed
 #---------------------------------------------------------------------------------
 TARGET		:=	$(shell basename $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
-DATA		:=	data  
 INCLUDES	:=	include
-SPRITES		:=  sprites
+DATA		:=	data
+NITRODATA	:=	nitrofiles
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -39,17 +88,18 @@ ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
-# any extra libraries we wish to link with the project (order is important)
+# any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:= -lgl2d	-lnds9
- 
- 
+LIBS	:= -lnflib -lfilesystem -lfat -lgl2d -lnds9
+
+
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=	$(LIBNDS)
- 
+LIBDIRS	:=	$(LIBNDS) $(CURDIR)/nflib
+
+
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
 # rules for different file extensions
@@ -60,16 +110,16 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-					$(foreach dir,$(SPRITES),$(CURDIR)/$(dir))
+					$(foreach dir,$(DATA),$(CURDIR)/$(dir))
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
+
+export NITRO_FILES	:=	$(CURDIR)/$(NITRODATA)
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
-SPRITE_FILES   :=  $(foreach dir, $(SPRITES),$(notdir $(wildcard $(dir)/*.png)))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -85,32 +135,40 @@ else
 endif
 #---------------------------------------------------------------------------------
 
-export OFILES	:=	$(SPRITE_FILES:.png=.o) \
-				$(addsuffix .o,$(BINFILES)) \
-			$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
- 
-export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD)
- 
+export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
+					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+
+export INCLUDE	:=	$(foreach dir,$(INCLUDES),-iquote $(CURDIR)/$(dir)) \
+					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+					-I$(CURDIR)/$(BUILD)
+
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
- 
+
+icons := $(wildcard *.bmp)
+
+ifneq (,$(findstring $(TARGET).bmp,$(icons)))
+	export GAME_ICON := $(CURDIR)/$(TARGET).bmp
+else
+	ifneq (,$(findstring icon.bmp,$(icons)))
+		export GAME_ICON := $(CURDIR)/icon.bmp
+	endif
+endif
+
 .PHONY: $(BUILD) clean
- 
+
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
- 
+	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9
 
 #---------------------------------------------------------------------------------
 else
- 
+
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
@@ -122,15 +180,12 @@ $(OUTPUT).elf	:	$(OFILES)
 	grit $< -ff../sprites/sprite.grit -o$*
 #---------------------------------------------------------------------------------
 
-	
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	$(bin2o)
- 
--include $(DEPSDIR)/*.d
- 
+
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------

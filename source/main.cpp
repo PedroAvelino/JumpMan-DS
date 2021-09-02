@@ -2,46 +2,59 @@
 #include <gl2d.h>
 #include <stdio.h>
 #include <vector>
+#include <nf_lib.h>
 
+
+#include "GarlicMath.hpp"
 
 #include "Boxxy.hpp"
 #include "Wall.hpp"
+#include "Coin.hpp"
+
+
+void InitConsole()
+{
+    consoleDemoInit();	
+	consoleClear();		
+	NF_Set2D(0,0);
+	NF_SetRootFolder("NITROFS");
+}
+
+
 int main(void)
 {
-    std::vector<Entity*> entities;
-
-    entities.push_back(new Boxxy()); //Create a new box
-    entities.push_back(new Wall( true )); //Create left wall
-    entities.push_back(new Wall( false )); //Create right wall
+    // std::vector<Entity*> entities;
+    // entities.push_back(new Boxxy()); //Create a new box
+    // entities.push_back(new Wall( true )); //Create left wall
+    // entities.push_back(new Wall( false )); //Create right wall
+    // entities.push_back(new Coin(Vector2(100, 0)));
+    // videoSetMode(MODE_5_3D);
+    // glScreen2D();
     
-    videoSetMode(MODE_5_3D);
-    glScreen2D();
+    InitConsole();
 
 
     while (1)
     {
         scanKeys();
-        glBegin2D();
-        
-        for ( auto e : entities )
-        {
-            e->Draw();
-        }
-        
-        glEnd2D();
+        // for ( auto e : entities )
+        // {
+        //     e->Draw();
+        // }
 
-        for ( auto e : entities )
-        {
-            e->Update();
-        }
+        // for ( auto e : entities )
+        // {
+        //     e->Update();
+        // }
 
-        glFlush(0);
+        NF_SpriteOamSet(0);
         swiWaitForVBlank();
+        oamUpdate(&oamMain);
     }
     
 
-    for ( auto e : entities )
-    {
-        delete e;
-    }
+    // for ( auto e : entities )
+    // {
+    //     delete e;
+    // }
 }
