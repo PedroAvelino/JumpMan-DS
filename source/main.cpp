@@ -27,15 +27,15 @@ void InitConsole()
 int main(void)
 {
     std::vector<Entity*> entities;
-    // entities.push_back(new Wall( true )); //Create left wall
-    // entities.push_back(new Wall( false )); //Create right wall
-    // entities.push_back(new Coin(Vector2(100, 0)));
     // videoSetMode(MODE_5_3D);
     // glScreen2D();
     
     InitConsole();
 
     entities.push_back(new Boxxy()); //Create a new box
+    entities.push_back(new Wall( true )); //Create left wall
+    entities.push_back(new Wall( false )); //Create right wall
+    entities.push_back(new Coin(Vector2(100, 0)));
 
     while (1)
     {
@@ -44,11 +44,10 @@ int main(void)
         {
             e->Draw();
         }
-
-        // for ( auto e : entities )
-        // {
-        //     e->Update();
-        // }
+        for ( auto e : entities )
+        {
+            e->Update();
+        }
 
         NF_SpriteOamSet(0);
         swiWaitForVBlank();
