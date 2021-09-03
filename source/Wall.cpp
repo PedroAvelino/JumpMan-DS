@@ -25,8 +25,11 @@ void Wall::Draw()
     //This is terrible lmao
     if( isLeft )
     {
+        //First left wall        
         NF_CreateSprite(0,1,1,1, pos.x, pos.y);
+        //Second left wall
         NF_CreateSprite(0,2,1,1, pos.x, pos.y + 64);
+        //Third left wall
         NF_CreateSprite(0,3,1,1, pos.x, pos.y + 64 + 64);
     }
     else
@@ -36,12 +39,11 @@ void Wall::Draw()
         NF_HflipSprite( 0, 4, true);
         //Second right wall
         NF_CreateSprite(0,5,1,1, pos.x, pos.y + 64);
-        NF_HflipSprite( 0, 4, true);
+        NF_HflipSprite( 0, 5, true);
         //Third right wall
         NF_CreateSprite(0,6,1,1, pos.x, pos.y + 64 + 64);
-        NF_HflipSprite( 0, 4, true);
+        NF_HflipSprite( 0, 6, true);
     }
-    //glBoxFilled(pos.x, pos.y , (pos.x + size.x) , (pos.y + size.y) ,RGB15(245,66,108));
 }
 
 Wall::~Wall()

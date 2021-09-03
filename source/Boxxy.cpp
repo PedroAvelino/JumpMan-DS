@@ -1,7 +1,7 @@
 #include "Boxxy.hpp"
 
 Boxxy::Boxxy()
-:speed(5.0)
+:speed(3.0)
 {
     pos.x = 50;
     pos.y = 50;

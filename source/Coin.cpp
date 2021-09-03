@@ -10,7 +10,9 @@ Coin::Coin( const Vector2& p_spawnPos )
 
 void Coin::Draw()
 {
-    glBoxFilled(pos.x, pos.y , (pos.x + size.x) , (pos.y + size.y) ,RGB15(252,240,3));
+    //First left wall        
+    NF_CreateSprite(0,7,2,2, pos.x, pos.y);
+    //glBoxFilled(pos.x, pos.y , (pos.x + size.x) , (pos.y + size.y) ,RGB15(252,240,3));
 }
 
 void Coin::Update()
@@ -20,7 +22,6 @@ void Coin::Update()
 
 void Coin::OnCollision( Entity* p_entity )
 {
-
 }
 
 Coin::~Coin()
