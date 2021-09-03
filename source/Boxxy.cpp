@@ -30,7 +30,8 @@ void Boxxy::Move( const Vector2& p_direction )
 {
     Vector2 direction;
     direction = p_direction;
-    VectorScale(direction, direction, speed);
+
+    VectorScale(direction, direction, isJumping ? speed *2 : speed);
 
     VectorAdd( pos, pos, direction );
 }
@@ -44,6 +45,8 @@ void Boxxy::Update()
 
     state = CheckState();
 
+
+    //Jump
     if( held & KEY_B )
     {
         if( isJumping == false )
@@ -51,17 +54,27 @@ void Boxxy::Update()
             isJumping = CanJump();
         }
     }
+    
+    //Up
     if( held & KEY_UP )
     {
-        Move(Vector2(0.0, -1.0));
+        if( isJumping == false )
+        {
+            Move(Vector2(0.0, -1.0));
+        }
     }
 
+    //Down
     if( held & KEY_DOWN )
     {
-        Move(Vector2(0.0, 1.0));
+        if( isJumping == false )
+        {
+            Move(Vector2(0.0, 1.0));
+        }
     }
 
     
+    //Auto move when jumping
     if( isJumping )
     {
         if( isLeftWall )
