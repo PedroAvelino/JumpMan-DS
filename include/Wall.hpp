@@ -3,6 +3,7 @@
 #include <nds.h>
 #include <gl2d.h>
 #include <stdio.h>
+#include <vector>
 
 #include "Entity.hpp"
 #include "GarlicMath.hpp"
@@ -20,4 +21,5 @@ public:
 private:
     Vector2 pos;
     bool isLeft;
+
 };

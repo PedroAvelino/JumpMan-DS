@@ -1,0 +1,1 @@
+grit.exe [PATH] -p -g -gT ff00ff -gB8 -ftb

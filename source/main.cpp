@@ -24,6 +24,15 @@ void InitConsole()
 	NF_InitSpriteSys(0);
 }
 
+void InitWallSprites()
+{
+    NF_LoadSpriteGfx("sprite/Wall", 1, 32, 64);
+    NF_LoadSpritePal("palettes/Wall", 1);
+
+    NF_VramSpriteGfx(0, 1, 1, true);
+	NF_VramSpritePal(0, 1, 1);
+}
+
 int main(void)
 {
     std::vector<Entity*> entities;
@@ -31,11 +40,12 @@ int main(void)
     // glScreen2D();
     
     InitConsole();
+    InitWallSprites();
 
     entities.push_back(new Boxxy()); //Create a new box
     entities.push_back(new Wall( true )); //Create left wall
     entities.push_back(new Wall( false )); //Create right wall
-    entities.push_back(new Coin(Vector2(100, 0)));
+    //entities.push_back(new Coin(Vector2(100, 0)));
 
     while (1)
     {
