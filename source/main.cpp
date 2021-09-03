@@ -1,5 +1,4 @@
 #include <nds.h>
-#include <gl2d.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -47,6 +46,7 @@ void InitCoinSprites()
 int main(void)
 {
     std::vector<Entity*> entities;
+    int randPos = 64 + ( std::rand() % ( 176 - 64 + 1 ) );
     // videoSetMode(MODE_5_3D);
     // glScreen2D();
     
@@ -56,24 +56,31 @@ int main(void)
 
     srand(time(NULL)); //Initiate random seed
 
-    entities.push_back(new Boxxy()); //Create a new box
+    Boxxy* player = new Boxxy();
     entities.push_back(new Wall( true )); //Create left wall
     entities.push_back(new Wall( false )); //Create right wall
     
-    // int randPos = rand() % 176 + 64;
-    int randPos = 64 + ( std::rand() % ( 176 - 64 + 1 ) );
-    entities.push_back(new Coin(Vector2(randPos, 0)));
+    //entities.push_back(new Coin(Vector2(randPos, 0)));
 
     while (1)
     {
         scanKeys();
+
+        //Update the player
+        player->Draw();
+        player->Update();
+
         for ( auto e : entities )
         {
+            if( e == nullptr ) continue;
+            
+            //Draw all entities
             e->Draw();
-        }
-        for ( auto e : entities )
-        {
+
+            //Update all entities
             e->Update();
+
+            player->CheckCollision( e );
         }
 
         NF_SpriteOamSet(0);
@@ -81,7 +88,7 @@ int main(void)
         oamUpdate(&oamMain);
     }
     
-
+    delete player;
     for ( auto e : entities )
     {
         delete e;

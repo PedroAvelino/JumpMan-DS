@@ -1,9 +1,9 @@
 #include "Boxxy.hpp"
 
 Boxxy::Boxxy()
-:speed(3.0)
+:speed(3.0), isLeftWall(true),state(BoxxyState::Left), isJumping(false)
 {
-    pos.x = 50;
+    pos.x = 28;
     pos.y = 50;
 
     size.x = 16.0f;
@@ -16,12 +16,15 @@ Boxxy::Boxxy()
 	NF_VramSpritePal(0, 0, 0);
 }
 
+//=================================================================
+//=================================================================
+
 void Boxxy::Draw()
 {
-
     NF_CreateSprite(0,0,0,0, pos.x, pos.y);
-    //glBoxFilled(pos.x, pos.y , (pos.x + size.x) , (pos.y + size.y) ,RGB15(202,137,240));
 }
+//=================================================================
+//=================================================================
 
 void Boxxy::Move( const Vector2& p_direction )
 {
@@ -32,20 +35,22 @@ void Boxxy::Move( const Vector2& p_direction )
     VectorAdd( pos, pos, direction );
 }
 
+//=================================================================
+//=================================================================
+
 void Boxxy::Update()
 {
     int held = keysHeld();
 
-    if( held & KEY_LEFT )
-    {
-        Move(Vector2(-1.0, 0.0));
-    }
+    state = CheckState();
 
-    if( held & KEY_RIGHT )
+    if( held & KEY_B )
     {
-        Move(Vector2(1.0, 0.0));
+        if( isJumping == false )
+        {
+            isJumping = CanJump();
+        }
     }
-
     if( held & KEY_UP )
     {
         Move(Vector2(0.0, -1.0));
@@ -55,7 +60,72 @@ void Boxxy::Update()
     {
         Move(Vector2(0.0, 1.0));
     }
+
+    
+    if( isJumping )
+    {
+        if( isLeftWall )
+        {
+            Move( Vector2(1.0, 0.0) );
+        }
+        else
+        {
+            Move( Vector2(-1.0, 0.0) );
+        }
+    }
 }
+
+//=================================================================
+//=================================================================
+
+void Boxxy::CheckCollision( Entity* p_entity )
+{
+    if( p_entity == nullptr ) return;
+
+
+}
+
+//=================================================================
+//=================================================================
+
+bool Boxxy::CanJump()
+{
+    if( state == BoxxyState::Left || state == BoxxyState::Right )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//=================================================================
+//=================================================================
+
+enum BoxxyState Boxxy::CheckState()
+{
+    if( pos.x <= 28)
+    {
+        isLeftWall = true;
+        isJumping = false;
+        return BoxxyState::Left;
+    }
+    else if( pos.x >= 196)
+    {
+        isLeftWall = false;
+        isJumping = false;
+        return BoxxyState::Right;
+    }
+    else
+    {
+        isJumping = true;
+        return BoxxyState::OnAir;
+    }
+}
+
+//=================================================================
+//=================================================================
 
 Boxxy::~Boxxy()
 {

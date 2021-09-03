@@ -23,7 +23,7 @@ include $(DEVKITARM)/base_rules
 LIBNDS	:=	$(DEVKITPRO)/libnds
 
 GAME_TITLE	    :=	JumpMan DS
-GAME_SUBTITLE1	:=	Text 2
+GAME_SUBTITLE1	:=	by GarlicNoodles
 GAME_SUBTITLE2	:=	Text 3
 GAME_ICON		:=	$(CURDIR)/../icon.bmp
 
@@ -32,12 +32,12 @@ _ADDFILES	:=	-d $(NITRO_FILES)
 
 #---------------------------------------------------------------------------------
 %.nds: %.arm9
-	@ndstool -c $@ -9 $< -b $(GAME_ICON) "$(GAME_TITLE);" $(_ADDFILES)
+	@ndstool -c $@ -9 $< -b $(GAME_ICON) "$(GAME_TITLE);$(GAME_SUBTITLE1);$(GAME_SUBTITLE2);" $(_ADDFILES)
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------
 %.nds: %.elf
-	@ndstool -c $@ -9 $< -b $(GAME_ICON) "$(GAME_TITLE);" $(_ADDFILES)
+	@ndstool -c $@ -9 $< -b $(GAME_ICON) "$(GAME_TITLE);$(GAME_SUBTITLE1);$(GAME_SUBTITLE2);" $(_ADDFILES)
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------
