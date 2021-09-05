@@ -18,6 +18,11 @@ void Entity::Update()
 
 }
 
+void Entity::Destroy()
+{
+
+}
+
 void Entity::OnCollision( Entity* p_entity )
 {
 }

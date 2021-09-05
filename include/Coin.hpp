@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nds.h>
-#include <gl2d.h>
 #include <stdio.h>
 
 #include "Collectable.hpp"
@@ -18,6 +17,7 @@ public:
     virtual void Draw() override;
     virtual void Update() override;
     virtual void OnCollision( Entity* p_entity ) override;
+    virtual void Destroy() override;
 private:
     float speed;
     

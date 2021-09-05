@@ -4,10 +4,10 @@ Boxxy::Boxxy()
 :speed(3.0), isLeftWall(true),state(BoxxyState::Left), isJumping(false)
 {
     pos.x = 28;
-    pos.y = 50;
+    pos.y = 150;
 
-    size.x = 16.0f;
-    size.y = 16.0f;
+    size.x = 28.0f;
+    size.y = 28.0f;
 
     NF_LoadSpriteGfx("sprite/Boxxy", 0, 32, 32);
     NF_LoadSpritePal("palettes/Boxxy", 0);
@@ -41,9 +41,9 @@ void Boxxy::Move( const Vector2& p_direction )
 
 void Boxxy::Update()
 {
-    int held = keysHeld();
 
     state = CheckState();
+    int held = keysHeld();
 
 
     //Jump
@@ -91,11 +91,17 @@ void Boxxy::Update()
 //=================================================================
 //=================================================================
 
-void Boxxy::CheckCollision( Entity* p_entity )
+void Boxxy::CheckCollision( Collectable* p_entity )
 {
     if( p_entity == nullptr ) return;
 
-
+    if( (pos.x <= p_entity->pos.x + p_entity->size.x)   && 
+        (pos.x + size.x >= p_entity->pos.x)             && 
+        (pos.y <= p_entity->pos.y + p_entity->size.y)   && 
+        pos.y + size.y >= p_entity->pos.y)
+    {
+        p_entity->Destroy();
+    }
 }
 
 //=================================================================

@@ -17,6 +17,8 @@ Wall::Wall( bool p_Left )
         pos.x = 224;
         pos.y = 0;
     }
+
+    Draw();
 }
 
 

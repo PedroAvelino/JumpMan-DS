@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nds.h>
-#include <gl2d.h>
 #include <stdio.h>
 
 #include "Entity.hpp"
@@ -11,6 +10,9 @@ class Entity;
 
 class Collectable : public Entity
 {
+public:
+    bool IsActive() { return active; }
 protected:
     float speed;
+    bool active;
 };

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "Entity.hpp"
+#include "Collectable.hpp"
 
 class Entity;
 
@@ -22,7 +23,7 @@ public:
     ~Boxxy();
 
 public:
-    void CheckCollision( Entity* p_entity);
+    void CheckCollision( Collectable* p_entity);
 
 public:
     virtual void Draw() override;
