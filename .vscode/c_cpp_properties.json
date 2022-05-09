@@ -4,8 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:\\ConsoleLibs\\DevkitPro\\libnds\\include\\**",
-                "D:\\ConsoleLibs\\nflib\\nflib\\include\\**"
+                "C:\\devkitPro\\libnds\\include\\**",
+                "D:\\ConsoleLibs\\nflib\\nflib\\include\\**",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -17,7 +18,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-msvc-x64",
             "compilerArgs": [
-                "D:\\ConsoleLibs\\DevkitPro\\libnds\\include",
+                "C:\\devkitPro\\libnds\\include",
                 "D:\\ConsoleLibs\\nflib\\nflib\\include"
             ]
         }

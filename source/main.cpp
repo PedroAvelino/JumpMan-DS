@@ -11,6 +11,8 @@
 #include "Wall.hpp"
 #include "Coin.hpp"
 #include "Collectable.hpp"
+#include "Singleton.hpp"
+#include "GameScore.hpp"
 
 void InitConsole()
 {
@@ -21,6 +23,11 @@ void InitConsole()
 
     NF_InitSpriteBuffers();
     NF_InitSpriteSys(0);
+}
+
+void InitScore()
+{
+    
 }
 
 void InitWallSprites()
@@ -41,13 +48,15 @@ void InitCoinSprites()
     NF_VramSpritePal(0, 2, 2);
 }
 
+const int MAX_COINS_ON_SCREEN = 10;
+
 int main(void)
 {
     std::vector<Collectable *> entities;
     srand(time(NULL)); //Initiate random seed
-    int randPos = 64 + (std::rand() % (176 - 64 + 1));
 
     InitConsole();
+    InitScore();
     InitWallSprites();
     InitCoinSprites();
 
@@ -56,7 +65,13 @@ int main(void)
     Wall *wallL = new Wall(true);  //Create left wall
     Wall *wallR = new Wall(false); //Create right wall
 
-    entities.push_back( new Coin(Vector2(randPos, 0)));
+    // for ( int i = 0; i < MAX_COINS_ON_SCREEN; i++)
+    // {
+    //     int randPos = 64 + (std::rand() % (176 - 64 + 1));
+    //     entities.push_back( new Coin(Vector2(randPos, 0)));
+    // }
+    
+
 
     while (1)
     {

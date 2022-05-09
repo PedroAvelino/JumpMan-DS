@@ -1,4 +1,5 @@
 #include "Boxxy.hpp"
+#include "GameScore.hpp"
 
 Boxxy::Boxxy()
 :speed(3.0), isLeftWall(true),state(BoxxyState::Left), isJumping(false)
@@ -100,6 +101,13 @@ void Boxxy::CheckCollision( Collectable* p_entity )
         (pos.y <= p_entity->pos.y + p_entity->size.y)   && 
         pos.y + size.y >= p_entity->pos.y)
     {
+
+        Coin* coin = static_cast<Coin*>(p_entity);
+        //Increment Player Score
+        if( coin != nullptr )
+        {
+            GameScore::GetInstance().IncrementScore();
+        }
         p_entity->Destroy();
     }
 }

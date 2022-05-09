@@ -4,6 +4,9 @@
 
 #include "Entity.hpp"
 #include "Collectable.hpp"
+#include "Coin.hpp"
+#include "GameScore.hpp"
+//#include "Spike.hpp"
 
 class Entity;
 
