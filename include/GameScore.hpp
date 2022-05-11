@@ -18,6 +18,8 @@ public:
     void CoinDeactivated();
     void SpikeDeactivated();
 
+    int GetScore() { return currentScore; }
+
 
 protected:
     GameScore();

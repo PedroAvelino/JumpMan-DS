@@ -16,7 +16,11 @@
 class GameScore;
 class SpriteIDServer;
 
+///////
+int coinCurrentSpawnDelay = 1;
+int coinDelay = 2;
 std::vector<Collectable *> entities;
+///////
 
 void InitConsole()
 {
@@ -51,6 +55,12 @@ void SpawnCoin()
         return;
     }
 
+    if( coinCurrentSpawnDelay > 0 )
+    {
+        coinCurrentSpawnDelay--;
+        return;
+    }
+
     for (auto e : entities)
     {
         Coin* coin = static_cast<Coin*>(e);
@@ -66,6 +76,8 @@ void SpawnCoin()
             coin->SetActive();
             
             GameScore::GetInstance().currentCoinsOnScreen++;
+            coinCurrentSpawnDelay = coinDelay;
+            return; //Return so that we only spawn one coin
         }
     }
     
@@ -103,7 +115,7 @@ int main(void)
     InitCoinSprites();
     InitCoins();
 
-    timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(1) , SpawnCoin);
+    timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnCoin);
 
     Boxxy *player = new Boxxy();
     Wall *wallL = new Wall(true);  //Create left wall
@@ -130,6 +142,15 @@ int main(void)
 
                 player->CheckCollision(e);
             }
+        }
+        
+        if( GameScore::GetInstance().GetScore() == 15 && coinDelay > 1 )
+        {
+            coinDelay--;
+        }
+        if( GameScore::GetInstance().GetScore() == 30 && coinDelay == 1  )
+        {
+            coinDelay = 0;
         }
 
         NF_SpriteOamSet(0);
