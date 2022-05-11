@@ -10,9 +10,7 @@ class Entity;
 
 class Collectable : public Entity
 {
-public:
-    bool IsActive() { return active; }
 protected:
     float speed;
-    bool active;
+    bool spriteCreated;
 };

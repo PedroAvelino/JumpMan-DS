@@ -12,10 +12,10 @@ class SpriteIDServer : public Singleton<SpriteIDServer>
 public:
     int GetID();
 protected:
-    SpriteIDServer( ) { };
-    ~SpriteIDServer( ) { };
+    SpriteIDServer( );
+    ~SpriteIDServer( );
 private:
-    int currentID = 3;
+    int currentID;
     
 };
 

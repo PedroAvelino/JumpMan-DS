@@ -15,11 +15,25 @@ public:
     void IncrementScore();
     void ResetScore();
 
+    void CoinDeactivated();
+    void SpikeDeactivated();
+
 
 protected:
-    GameScore() { };
+    GameScore();
     ~GameScore() { };
 
 private:
     int currentScore;
+
+public:
+    int maxCoinsToSpawn;
+    int maxSpikesToSpawn;
+
+
+public:
+    int currentCoinsOnScreen;
+    int maxCoinsOnScreen;
+    int currentSpikesOnScreen;
+    int maxSpikesOnScreen;
 };

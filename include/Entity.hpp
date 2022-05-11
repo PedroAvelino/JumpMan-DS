@@ -13,6 +13,12 @@ public:
     ~Entity();
 
 public:
+    virtual bool IsActive() { return active; }
+    virtual void SetActive() { active = true; }
+
+protected:
+    virtual void LoadSprite();
+public:
     virtual void Draw();
     virtual void Update();
     virtual void OnCollision( Entity* p_entity );
@@ -21,4 +27,7 @@ public:
     Vector2 pos;
     Vector2 size;
 
+protected:
+    int spriteID;
+    bool active;
 };

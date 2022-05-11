@@ -1,5 +1,6 @@
 #include "Boxxy.hpp"
 #include "GameScore.hpp"
+#include "SpriteIDServer.hpp"
 
 Boxxy::Boxxy()
 :speed(3.0), isLeftWall(true),state(BoxxyState::Left), isJumping(false)
@@ -10,6 +11,13 @@ Boxxy::Boxxy()
     size.x = 28.0f;
     size.y = 28.0f;
 
+    spriteID = SpriteIDServer::GetInstance().GetID();
+
+    LoadSprite();
+}
+
+void Boxxy::LoadSprite()
+{
     NF_LoadSpriteGfx("sprite/Boxxy", 0, 32, 32);
     NF_LoadSpritePal("palettes/Boxxy", 0);
 
@@ -22,7 +30,7 @@ Boxxy::Boxxy()
 
 void Boxxy::Draw()
 {
-    NF_CreateSprite(0,0,0,0, pos.x, pos.y);
+    NF_CreateSprite(0,spriteID,0,0, pos.x, pos.y);
 }
 //=================================================================
 //=================================================================
@@ -59,7 +67,7 @@ void Boxxy::Update()
     //Up
     if( held & KEY_UP )
     {
-        if( isJumping == false )
+        if( isJumping == false && pos.y > 0 )
         {
             Move(Vector2(0.0, -1.0));
         }
@@ -68,7 +76,7 @@ void Boxxy::Update()
     //Down
     if( held & KEY_DOWN )
     {
-        if( isJumping == false )
+        if( isJumping == false  && pos.y < ( 192 - size.y ) )
         {
             Move(Vector2(0.0, 1.0));
         }

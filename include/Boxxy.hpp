@@ -37,6 +37,9 @@ private:
     enum BoxxyState CheckState();
     bool CanJump();
 
+protected:
+    virtual void LoadSprite() override;
+
 
 private:
     float speed;

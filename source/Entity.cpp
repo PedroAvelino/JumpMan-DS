@@ -1,11 +1,17 @@
 #include "Entity.hpp"
 
 Entity::Entity()
+: active(true)
 {
 }
 
 Entity::~Entity()
 {
+}
+
+void Entity::LoadSprite()
+{
+    
 }
 
 void Entity::Draw()

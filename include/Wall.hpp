@@ -21,4 +21,7 @@ private:
     Vector2 pos;
     bool isLeft;
 
+    int wallSpriteAmount;
+    std::vector<int> spriteIDS;
+
 };
