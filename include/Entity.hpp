@@ -27,6 +27,10 @@ public:
     Vector2 pos;
     Vector2 size;
 
+public:
+    //THIS FUCKING SHIT ASS OLD MAKEFILE DOESN'T LET ME USE DYNAMIC CASTS SO I GOTTA DO THIS STUPID SHIT TO TELL CLASSES APART
+    virtual int ClassType() { return -1; } 
+
 protected:
     int spriteID;
     bool active;

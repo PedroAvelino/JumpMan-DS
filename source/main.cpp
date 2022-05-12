@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
@@ -9,18 +10,20 @@
 #include "Boxxy.hpp"
 #include "Wall.hpp"
 #include "Coin.hpp"
+#include "Spike.hpp"
 #include "Collectable.hpp"
 #include "Singleton.hpp"
 #include "GameScore.hpp"
 
-class GameScore;
-class SpriteIDServer;
-
 ///////
-int coinCurrentSpawnDelay = 1;
-int coinDelay = 2;
+int coinCurrentSpawnDelay = 2;
+int coinDelay = 1;
+
+int spikeCurrenSpawnDelay = 5;
+int spikeDelay = 5;
 std::vector<Collectable *> entities;
 ///////
+
 
 void InitConsole()
 {
@@ -39,6 +42,15 @@ void InitCoins()
     {
         int randPos = 64 + (std::rand() % (176 - 64 + 1));
         entities.push_back( new Coin(Vector2(randPos, 0)));
+    }
+}
+
+void InitSpikes()
+{
+    for (int i = 0; i < GameScore::GetInstance().maxSpikesToSpawn; i++)
+    {
+        int randPos = 64 + (std::rand() % (176 - 64 + 1));
+        entities.push_back( new Spike(Vector2(randPos, 0)));
     }
     
 }
@@ -63,6 +75,8 @@ void SpawnCoin()
 
     for (auto e : entities)
     {
+        if( e->ClassType() != 2 ) continue;
+
         Coin* coin = static_cast<Coin*>(e);
         if( coin == nullptr ) continue;
         
@@ -77,6 +91,43 @@ void SpawnCoin()
             
             GameScore::GetInstance().currentCoinsOnScreen++;
             coinCurrentSpawnDelay = coinDelay;
+            return; //Return so that we only spawn one coin
+        }
+    }
+    
+
+}
+void SpawnSpike()
+{
+    if( GameScore::GetInstance().currentSpikesOnScreen >= GameScore::GetInstance().maxSpikesOnScreen )
+    {
+        return;
+    }
+
+    if( spikeCurrenSpawnDelay > 0 )
+    {
+        spikeCurrenSpawnDelay--;
+        return;
+    }
+
+    for (auto e : entities)
+    {
+        if( e->ClassType() != 1 ) continue;
+
+        Spike* spike = static_cast<Spike*>(e);
+        if( spike == nullptr ) continue;
+        
+
+        if( spike->IsActive() == false )
+        {
+            int randPos = 64 + (std::rand() % (176 - 64 + 1));
+            spike->pos.x = randPos;
+            spike->pos.y = 0;
+
+            spike->SetActive();
+            
+            GameScore::GetInstance().currentSpikesOnScreen++;
+            spikeCurrenSpawnDelay = spikeDelay;
             return; //Return so that we only spawn one coin
         }
     }
@@ -103,6 +154,16 @@ void InitCoinSprites()
 
 }
 
+void InitSpikeSprites()
+{
+    NF_LoadSpriteGfx("sprite/Spike", 3, 16, 16);
+    NF_LoadSpritePal("palettes/Spike", 3);
+
+    NF_VramSpriteGfx(0, 3, 3, true);
+    NF_VramSpritePal(0, 3, 3);
+
+}
+
 
 
 int main(void)
@@ -110,12 +171,16 @@ int main(void)
     srand(time(NULL)); //Initiate random seed
 
     InitConsole();
-    InitScore();
     InitWallSprites();
     InitCoinSprites();
+    InitSpikeSprites();
+
+    InitScore();
     InitCoins();
+    InitSpikes();
 
     timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnCoin);
+    timerStart(1,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnSpike);
 
     Boxxy *player = new Boxxy();
     Wall *wallL = new Wall(true);  //Create left wall
@@ -147,10 +212,12 @@ int main(void)
         if( GameScore::GetInstance().GetScore() == 15 && coinDelay > 1 )
         {
             coinDelay--;
+            spikeDelay--;
         }
         if( GameScore::GetInstance().GetScore() == 30 && coinDelay == 1  )
         {
             coinDelay = 0;
+            spikeDelay -= 2;
         }
 
         NF_SpriteOamSet(0);

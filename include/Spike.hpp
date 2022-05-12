@@ -8,20 +8,20 @@
 
 class Collectable;
 
-class Coin : public Collectable
+class Spike : public Collectable
 {
 public:
-    Coin( const Vector2& p_spawnPos );
-    ~Coin();
+    Spike( const Vector2& p_spawnPos );
+    ~Spike();
 public:
     virtual void Draw() override;
     virtual void Update() override;
     virtual void OnCollision( Entity* p_entity ) override;
     virtual void Destroy() override;
+
     virtual int ClassType() override;
 private:
     float speed;
-    
 };
 
 

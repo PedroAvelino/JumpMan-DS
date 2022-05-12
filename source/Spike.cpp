@@ -1,10 +1,10 @@
-#include "Coin.hpp"
+#include "Spike.hpp"
 #include "SpriteIDServer.hpp"
 #include "GameScore.hpp"
 
-#define COIN 2
+#define SPIKE 1
 
-Coin::Coin( const Vector2& p_spawnPos )
+Spike::Spike( const Vector2& p_spawnPos )
 :speed(2)
 {
     pos = p_spawnPos;
@@ -14,21 +14,21 @@ Coin::Coin( const Vector2& p_spawnPos )
     spriteID = SpriteIDServer::GetInstance().GetID();
 }
 
-void Coin::Draw()
+int Spike::ClassType()
+{
+    return 1;
+}
+
+void Spike::Draw()
 {
     if( active )
     {
         NF_ShowSprite(0,spriteID, true);
-        NF_CreateSprite(0,spriteID,2,2, pos.x, pos.y);
+        NF_CreateSprite(0,spriteID,3,3, pos.x, pos.y);
     }
 }
 
-int Coin::ClassType()
-{
-    return 2;
-}
-
-void Coin::Update()
+void Spike::Update()
 {
     if( active == false ) return;
     if( pos.y > 192 + size.y )
@@ -39,18 +39,18 @@ void Coin::Update()
 
 }
 
-void Coin::OnCollision( Entity* p_entity )
+void Spike::OnCollision( Entity* p_entity )
 {
 }
 
-void Coin::Destroy()
+void Spike::Destroy()
 {
     active = false;
-    GameScore::GetInstance().currentCoinsOnScreen--;
+    GameScore::GetInstance().currentSpikesOnScreen--;
     NF_ShowSprite(0,spriteID, false);
 }
 
-Coin::~Coin()
+Spike::~Spike()
 {
 
 }
