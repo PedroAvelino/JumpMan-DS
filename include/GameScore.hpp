@@ -13,12 +13,14 @@ class GameScore : public Singleton<GameScore>
     friend class Singleton<GameScore>;
 public:
     void IncrementScore();
+    void DecreaseLife() { playerLife--; }
     void ResetScore();
 
     void CoinDeactivated();
     void SpikeDeactivated();
 
     int GetScore() { return currentScore; }
+    int GetPlayerLife() { return playerLife; }
 
 
 protected:
@@ -27,6 +29,8 @@ protected:
 
 private:
     int currentScore;
+    int playerLife;
+
 
 public:
     int maxCoinsToSpawn;
@@ -35,7 +39,7 @@ public:
 
 public:
     int currentCoinsOnScreen;
-    int maxCoinsOnScreen;
     int currentSpikesOnScreen;
+    int maxCoinsOnScreen;
     int maxSpikesOnScreen;
 };

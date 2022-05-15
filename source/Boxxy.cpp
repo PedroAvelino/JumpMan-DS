@@ -11,18 +11,20 @@ Boxxy::Boxxy()
     size.x = 28.0f;
     size.y = 28.0f;
 
-    spriteID = SpriteIDServer::GetInstance().GetID();
-
-    LoadSprite();
+    active = false;
 }
 
 void Boxxy::LoadSprite()
 {
+    spriteID = SpriteIDServer::GetInstance().GetID();
     NF_LoadSpriteGfx("sprite/Boxxy", 0, 32, 32);
     NF_LoadSpritePal("palettes/Boxxy", 0);
 
     NF_VramSpriteGfx(0, 0, 0, true);
 	NF_VramSpritePal(0, 0, 0);
+
+    NF_CreateSprite(0,spriteID,0,0, pos.x, pos.y);
+    NF_ShowSprite(0,spriteID,false);
 }
 
 //=================================================================
@@ -30,7 +32,11 @@ void Boxxy::LoadSprite()
 
 void Boxxy::Draw()
 {
-    NF_CreateSprite(0,spriteID,0,0, pos.x, pos.y);
+    if( active )
+    {
+        NF_MoveSprite(0, spriteID, pos.x, pos.y );
+        NF_ShowSprite(0,spriteID,true);
+    }
 }
 //=================================================================
 //=================================================================
@@ -50,6 +56,7 @@ void Boxxy::Move( const Vector2& p_direction )
 
 void Boxxy::Update()
 {
+    if( active == false ) return;
 
     state = CheckState();
     int held = keysHeld();
@@ -102,7 +109,7 @@ void Boxxy::Update()
 
 void Boxxy::CheckCollision( Collectable* p_entity )
 {
-    if( p_entity == nullptr ) return;
+    if( p_entity == nullptr || active == false ) return;
 
     if( (pos.x <= p_entity->pos.x + p_entity->size.x)   && 
         (pos.x + size.x >= p_entity->pos.x)             && 
@@ -110,11 +117,24 @@ void Boxxy::CheckCollision( Collectable* p_entity )
         pos.y + size.y >= p_entity->pos.y)
     {
 
-        Coin* coin = static_cast<Coin*>(p_entity);
-        //Increment Player Score
-        if( coin != nullptr )
+        if( p_entity->ClassType() == 2)
         {
-            GameScore::GetInstance().IncrementScore();
+            Coin* coin = static_cast<Coin*>(p_entity);
+            //Increment Player Score
+            if( coin != nullptr )
+            {
+                GameScore::GetInstance().IncrementScore();
+            }
+        }
+
+        if( p_entity->ClassType() == 1 )
+        {
+            Spike* spike = static_cast<Spike*>(p_entity);
+            //Increment Player Score
+            if( spike != nullptr )
+            {
+                GameScore::GetInstance().DecreaseLife();
+            }
         }
         p_entity->Destroy();
     }

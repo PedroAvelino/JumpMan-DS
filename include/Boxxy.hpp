@@ -6,7 +6,7 @@
 #include "Collectable.hpp"
 #include "Coin.hpp"
 #include "GameScore.hpp"
-//#include "Spike.hpp"
+#include "Spike.hpp"
 
 class Entity;
 
@@ -32,15 +32,11 @@ public:
     virtual void Draw() override;
     virtual void Update() override;
     virtual void Move( const Vector2& p_direction ) override;
+    virtual void LoadSprite() override;
 
 private:
     enum BoxxyState CheckState();
     bool CanJump();
-
-protected:
-    virtual void LoadSprite() override;
-
-
 private:
     float speed;
     bool isLeftWall;

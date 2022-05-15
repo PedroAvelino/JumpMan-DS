@@ -16,25 +16,95 @@
 #include "GameScore.hpp"
 
 ///////
+enum GameState
+{
+    SPLASH = 0,
+    INGAME = 1,
+    GAMEOVER = 2
+};
+
+
+GameState state = GameState::SPLASH;
+Boxxy *player = new Boxxy();
+
+char life[32];
 int coinCurrentSpawnDelay = 2;
 int coinDelay = 1;
 
 int spikeCurrenSpawnDelay = 5;
 int spikeDelay = 5;
 std::vector<Collectable *> entities;
+
+char score[32];
 ///////
 
 
 void InitConsole()
 {
+    NF_Set2D(0, 0);
+    NF_Set2D(1, 0);
     consoleDemoInit();
     consoleClear();
-    NF_Set2D(0, 0);
     NF_SetRootFolder("NITROFS");
 
     NF_InitSpriteBuffers();
     NF_InitSpriteSys(0);
 }
+
+void InitText()
+{
+    //Initialize sprite background
+    NF_InitTiledBgBuffers();
+    NF_InitTiledBgSys(1);
+    
+    //Initialize text motor
+    NF_InitTextSys(1);
+    NF_LoadTextFont("fonts/default","test", 256,256,0);
+    NF_CreateTextLayer(1,0,0,"test");
+
+    NF_WriteText(1, 0, 1, 1, "SCORE: 0");
+    NF_WriteText(1, 0, 10, 1, "LIFE: 0");
+
+}
+
+/////////////////////GRAPHICS
+void InitWallSprites()
+{
+    NF_LoadSpriteGfx("sprite/Blockwall", 1, 32, 64);
+    NF_LoadSpritePal("palettes/Blockwall", 1);
+
+    NF_VramSpriteGfx(0, 1, 1, true);
+    NF_VramSpritePal(0, 1, 1);
+}
+
+void InitCoinSprites()
+{
+    NF_LoadSpriteGfx("sprite/Coin", 2, 16, 16);
+    NF_LoadSpritePal("palettes/Coin", 2);
+
+    NF_VramSpriteGfx(0, 2, 2, true);
+    NF_VramSpritePal(0, 2, 2);
+
+}
+
+void InitSpikeSprites()
+{
+    NF_LoadSpriteGfx("sprite/Spike", 3, 16, 16);
+    NF_LoadSpritePal("palettes/Spike", 3);
+
+    NF_VramSpriteGfx(0, 3, 3, true);
+    NF_VramSpritePal(0, 3, 3);
+
+}
+void InitBackgrounds()
+{
+    NF_InitTiledBgSys(0);   
+    NF_LoadTiledBg("bg/background", "bg", 256, 256);
+    NF_LoadTiledBg("bg/splash", "logo", 256, 256);
+    NF_CreateTiledBg(0, 2, "logo");
+    NF_CreateTiledBg(0, 3, "bg");
+}
+
 
 void InitCoins()
 {
@@ -62,7 +132,8 @@ void InitScore()
 
 void SpawnCoin()
 {
-    if( GameScore::GetInstance().currentCoinsOnScreen >= GameScore::GetInstance().maxCoinsOnScreen )
+    if( GameScore::GetInstance().currentCoinsOnScreen >= GameScore::GetInstance().maxCoinsOnScreen &&
+        state != GameState::INGAME)
     {
         return;
     }
@@ -97,9 +168,11 @@ void SpawnCoin()
     
 
 }
+
 void SpawnSpike()
 {
-    if( GameScore::GetInstance().currentSpikesOnScreen >= GameScore::GetInstance().maxSpikesOnScreen )
+    if( GameScore::GetInstance().currentSpikesOnScreen >= GameScore::GetInstance().maxSpikesOnScreen &&
+        state != GameState::INGAME)
     {
         return;
     }
@@ -135,94 +208,126 @@ void SpawnSpike()
 
 }
 
-void InitWallSprites()
+void UpdateScore()
 {
-    NF_LoadSpriteGfx("sprite/Blockwall", 1, 32, 64);
-    NF_LoadSpritePal("palettes/Blockwall", 1);
-
-    NF_VramSpriteGfx(0, 1, 1, true);
-    NF_VramSpritePal(0, 1, 1);
+    sprintf(score, "SCORE: %d", GameScore::GetInstance().GetScore());
+    NF_WriteText(1, 0, 1, 1, score);
 }
 
-void InitCoinSprites()
+void UpdateLife()
 {
-    NF_LoadSpriteGfx("sprite/Coin", 2, 16, 16);
-    NF_LoadSpritePal("palettes/Coin", 2);
-
-    NF_VramSpriteGfx(0, 2, 2, true);
-    NF_VramSpritePal(0, 2, 2);
-
+    sprintf(life, "LIFE: %d", GameScore::GetInstance().GetPlayerLife());
+    NF_WriteText(1, 0, 10, 1, life);
 }
 
-void InitSpikeSprites()
+//////////////Game States
+
+void UpdateSplash()
 {
-    NF_LoadSpriteGfx("sprite/Spike", 3, 16, 16);
-    NF_LoadSpritePal("palettes/Spike", 3);
+    scanKeys();
+    int held = keysHeld();
 
-    NF_VramSpriteGfx(0, 3, 3, true);
-    NF_VramSpritePal(0, 3, 3);
+    // Check leave state
+    if( held & KEY_START )
+    {
+        timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnCoin);
+        timerStart(1,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnSpike);
+        player->SetActive();
+        NF_HideBg(0,2);
+        state = GameState::INGAME;
+    }
 
+    NF_SpriteOamSet(0);
+    NF_UpdateTextLayers();
+    swiWaitForVBlank();
+    oamUpdate(&oamMain);
 }
 
+
+void UpdateInGame()
+{
+    scanKeys();
+    //Update the player
+    player->Draw();
+    player->Update();
+
+    for (auto e : entities)
+    {
+        if (e->IsActive())
+        {
+            //Draw all entities
+            e->Draw();
+
+            //Update all entities
+            e->Update();
+
+            player->CheckCollision(e);
+        }
+    }
+
+    UpdateScore();
+    UpdateLife();
+    if( GameScore::GetInstance().GetScore() == 15 && coinDelay > 1 )
+    {
+        coinDelay--;
+        spikeDelay--;
+    }
+    if( GameScore::GetInstance().GetScore() == 30 && coinDelay == 1  )
+    {
+        coinDelay = 0;
+        spikeDelay -= 2;
+    }
+
+    NF_SpriteOamSet(0);
+    NF_UpdateTextLayers();
+    swiWaitForVBlank();
+    oamUpdate(&oamMain);
+}
+///////////////
 
 
 int main(void)
 {
     srand(time(NULL)); //Initiate random seed
 
+
     InitConsole();
+    player->LoadSprite();
     InitWallSprites();
     InitCoinSprites();
     InitSpikeSprites();
+    InitText();
+
+    InitBackgrounds();
 
     InitScore();
     InitCoins();
     InitSpikes();
 
-    timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnCoin);
-    timerStart(1,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnSpike);
-
-    Boxxy *player = new Boxxy();
     Wall *wallL = new Wall(true);  //Create left wall
     Wall *wallR = new Wall(false); //Create right wall
 
-
     while (1)
     {
-        scanKeys();
-
-        //Update the player
-        player->Draw();
-        player->Update();
-
-        for (auto e : entities)
+        //           """State Machine"""
+        switch (state)
         {
-            if (e->IsActive())
-            {
-                //Draw all entities
-                e->Draw();
+            case GameState::SPLASH:
+                UpdateSplash();
+            break;
 
-                //Update all entities
-                e->Update();
-
-                player->CheckCollision(e);
-            }
-        }
         
-        if( GameScore::GetInstance().GetScore() == 15 && coinDelay > 1 )
-        {
-            coinDelay--;
-            spikeDelay--;
-        }
-        if( GameScore::GetInstance().GetScore() == 30 && coinDelay == 1  )
-        {
-            coinDelay = 0;
-            spikeDelay -= 2;
+            case GameState::INGAME:
+                UpdateInGame();
+            break;
+
+            case GameState::GAMEOVER:
+                break;
+        
         }
 
-        NF_SpriteOamSet(0);
-        swiWaitForVBlank();
-        oamUpdate(&oamMain);
+
+        
     }
 
     delete player;
