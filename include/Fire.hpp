@@ -8,11 +8,11 @@
 
 class Collectable;
 
-class Spike : public Collectable
+class Fire : public Collectable
 {
 public:
-    Spike( const Vector2& p_spawnPos );
-    ~Spike();
+    Fire( const Vector2& p_spawnPos );
+    ~Fire();
 public:
     virtual void Draw() override;
     virtual void Update() override;
@@ -20,8 +20,11 @@ public:
 
     virtual int ClassType() override;
 
+
+private:
+    void TravelToOrigin();
 private:
     float speed;
+    float startX;
+
 };
-
-

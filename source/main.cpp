@@ -11,6 +11,9 @@
 #include "Wall.hpp"
 #include "Coin.hpp"
 #include "Spike.hpp"
+#include "Reverse.hpp"
+#include "Bomb.hpp"
+#include "Fire.hpp"
 #include "Collectable.hpp"
 #include "Singleton.hpp"
 #include "GameScore.hpp"
@@ -27,13 +30,21 @@ enum GameState
 GameState state = GameState::SPLASH;
 Boxxy *player = new Boxxy();
 
+
 char life[32];
 int coinCurrentSpawnDelay = 2;
 int coinDelay = 1;
 
 int spikeCurrenSpawnDelay = 5;
-int spikeDelay = 5;
+int spikeDelay = 8;
+bool shouldUpdateFire = false;
+
 std::vector<Collectable *> entities;
+std::vector<Collectable *> nonCollectables;
+
+
+
+Vector2 ee = Vector2(1, 2);
 
 char score[32];
 ///////
@@ -51,6 +62,7 @@ void InitConsole()
     NF_InitSpriteSys(0);
 }
 
+#pragma region Graphics Initialization
 void InitText()
 {
     //Initialize sprite background
@@ -105,7 +117,9 @@ void InitBackgrounds()
     NF_CreateTiledBg(0, 3, "bg");
 }
 
+#pragma endregion
 
+#pragma region Entities Initialization
 void InitCoins()
 {
     for (int i = 0; i < GameScore::GetInstance().maxCoinsToSpawn; i++)
@@ -125,11 +139,32 @@ void InitSpikes()
     
 }
 
+void InitBombs()
+{
+    for (int i = 0; i < GameScore::GetInstance().maxSpikesToSpawn; i++)
+    {
+        int randPos = 64 + (std::rand() % (176 - 64 + 1));
+        entities.push_back( new Bomb(Vector2(randPos, 0)));
+    }
+    
+}
+
+void InitFire()
+{
+    //Fire 1: 32
+    //Fire 2: 208
+
+    nonCollectables.push_back( new Fire( Vector2(32, 0) ) );
+    nonCollectables.push_back( new Fire( Vector2(208, 0) ) );
+}
+
 void InitScore()
 {
     GameScore::GetInstance().ResetScore();
 }
+#pragma endregion
 
+#pragma region Spawn
 void SpawnCoin()
 {
     if( GameScore::GetInstance().currentCoinsOnScreen >= GameScore::GetInstance().maxCoinsOnScreen &&
@@ -165,8 +200,6 @@ void SpawnCoin()
             return; //Return so that we only spawn one coin
         }
     }
-    
-
 }
 
 void SpawnSpike()
@@ -176,6 +209,7 @@ void SpawnSpike()
     {
         return;
     }
+    
 
     if( spikeCurrenSpawnDelay > 0 )
     {
@@ -204,9 +238,46 @@ void SpawnSpike()
             return; //Return so that we only spawn one coin
         }
     }
-    
-
 }
+
+void SpawnBomb()
+{
+    if( GameScore::GetInstance().currentSpikesOnScreen >= GameScore::GetInstance().maxSpikesOnScreen &&
+        state != GameState::INGAME || GameScore::GetInstance().isFireOn)
+    {
+        return;
+    }
+
+    if( spikeCurrenSpawnDelay > 0 )
+    {
+        spikeCurrenSpawnDelay--;
+        return;
+    }
+
+    for (auto e : entities)
+    {
+        if( e->ClassType() != 4 ) continue;
+
+        Bomb* bomb = static_cast<Bomb*>(e);
+        if( bomb == nullptr ) continue;
+        
+
+        if( bomb->IsActive() == false )
+        {
+            int randPos = 64 + (std::rand() % (176 - 64 + 1));
+            bomb->pos.x = randPos;
+            bomb->pos.y = 0;
+            bomb->SetHeightToExplode( player->pos.y );
+
+            bomb->SetActive();
+            
+            GameScore::GetInstance().currentSpikesOnScreen++;
+            spikeCurrenSpawnDelay = spikeDelay;
+            return; //Return so that we only spawn one coin
+        }
+    }
+}
+#pragma endregion
 
 void UpdateScore()
 {
@@ -226,12 +297,26 @@ void UpdateSplash()
 {
     scanKeys();
     int held = keysHeld();
-
+    
     // Check leave state
+
+    //POS 1
+    //X1:32
+    //X2:32
+    //Y1: tanto faz (20)
+    //Y2: 64
+
+    //POS 2
+    //X1:192
+    //X2: 224
+    //Y1: tanto faz (20)
+    //Y2: 64
     if( held & KEY_START )
     {
-        timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnCoin);
-        timerStart(1,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnSpike);
+        timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , []() {SpawnSpike;SpawnCoin;});
+        // timerStart(1,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnSpike);
+        timerStart(1,ClockDivider_1024, TIMER_FREQ_1024(2) , SpawnBomb);
+
         player->SetActive();
         NF_HideBg(0,2);
         state = GameState::INGAME;
@@ -242,7 +327,6 @@ void UpdateSplash()
     swiWaitForVBlank();
     oamUpdate(&oamMain);
 }
-
 
 void UpdateInGame()
 {
@@ -255,18 +339,59 @@ void UpdateInGame()
     {
         if (e->IsActive())
         {
-            //Draw all entities
-            e->Draw();
-
             //Update all entities
             e->Update();
+
+            //Draw all entities
+            e->Draw();
 
             player->CheckCollision(e);
         }
     }
 
+    //Prepare fire
+    if( GameScore::GetInstance().createFire )
+    {
+        shouldUpdateFire = true;
+        for (auto i : nonCollectables)
+        {
+            if ( i->IsActive() ) continue;
+
+            i->SetActive();
+            i->pos = GameScore::GetInstance().explosionLocation;
+        }
+
+        GameScore::GetInstance().createFire = false;
+    }
+
+    if( shouldUpdateFire )
+    {
+        int firesDone = 0;
+        for ( auto n : nonCollectables )
+        {
+            if( n->IsActive() == false )
+            {
+                firesDone++;
+                continue;
+            }
+
+            //Update all entities
+            n->Update();
+
+            //Draw all entities
+            n->Draw();
+        }
+
+        if ( firesDone == 2 )
+        {
+            shouldUpdateFire = false;
+            GameScore::GetInstance().isFireOn = false;
+        }
+    }
+
     UpdateScore();
     UpdateLife();
+    
     if( GameScore::GetInstance().GetScore() == 15 && coinDelay > 1 )
     {
         coinDelay--;
@@ -277,7 +402,7 @@ void UpdateInGame()
         coinDelay = 0;
         spikeDelay -= 2;
     }
-
+    
     NF_SpriteOamSet(0);
     NF_UpdateTextLayers();
     swiWaitForVBlank();
@@ -300,12 +425,17 @@ int main(void)
 
     InitBackgrounds();
 
+
     InitScore();
     InitCoins();
     InitSpikes();
+    InitBombs();
+    InitFire();
 
     Wall *wallL = new Wall(true);  //Create left wall
     Wall *wallR = new Wall(false); //Create right wall
+
+
 
     while (1)
     {
@@ -315,7 +445,6 @@ int main(void)
             case GameState::SPLASH:
                 UpdateSplash();
             break;
-
         
             case GameState::INGAME:
                 UpdateInGame();
@@ -325,15 +454,16 @@ int main(void)
                 break;
         
         }
-
-
-        
     }
 
     delete player;
     delete wallL;
     delete wallR;
     for (auto e : entities)
+    {
+        delete e;
+    }
+    for (auto e : nonCollectables)
     {
         delete e;
     }

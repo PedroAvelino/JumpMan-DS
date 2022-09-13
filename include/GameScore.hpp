@@ -42,4 +42,9 @@ public:
     int currentSpikesOnScreen;
     int maxCoinsOnScreen;
     int maxSpikesOnScreen;
+
+public:
+    Vector2 explosionLocation;
+    bool isFireOn;
+    bool createFire;
 };

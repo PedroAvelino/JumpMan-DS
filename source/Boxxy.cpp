@@ -116,25 +116,44 @@ void Boxxy::CheckCollision( Collectable* p_entity )
         (pos.y <= p_entity->pos.y + p_entity->size.y)   && 
         pos.y + size.y >= p_entity->pos.y)
     {
-
-        if( p_entity->ClassType() == 2)
+        
+        switch (p_entity->ClassType())
         {
-            Coin* coin = static_cast<Coin*>(p_entity);
-            //Increment Player Score
-            if( coin != nullptr )
+            case 1:
             {
-                GameScore::GetInstance().IncrementScore();
+                Spike* spike = static_cast<Spike*>(p_entity);
+                //Increment Player Score
+                if( spike != nullptr )
+                {
+                    GameScore::GetInstance().DecreaseLife();
+                }
             }
-        }
+            break;
+        
+            case 2:
+            {
+                Coin* coin = static_cast<Coin*>(p_entity);
+                //Increment Player Score
+                if( coin != nullptr )
+                {
+                    GameScore::GetInstance().IncrementScore();
+                }
+            }
+            
+            case 3:
+            {
+                Reverse* rev = static_cast<Reverse*>(p_entity);
+                //Increment Player Score
+                if( rev != nullptr )
+                {
+                    isLeftWall = !isLeftWall;
+                }
+            }
 
-        if( p_entity->ClassType() == 1 )
-        {
-            Spike* spike = static_cast<Spike*>(p_entity);
-            //Increment Player Score
-            if( spike != nullptr )
-            {
-                GameScore::GetInstance().DecreaseLife();
-            }
+            break;
+        
+            default:
+            break;
         }
         p_entity->Destroy();
     }
