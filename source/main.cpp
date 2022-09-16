@@ -16,6 +16,7 @@
 #include "Fire.hpp"
 #include "Collectable.hpp"
 #include "Singleton.hpp"
+#include "Explosion.hpp"
 #include "GameScore.hpp"
 
 ///////
@@ -108,6 +109,15 @@ void InitSpikeSprites()
     NF_VramSpritePal(0, 3, 3);
 
 }
+void InitFireSprites()
+{
+    NF_LoadSpriteGfx("sprite/Fire", 4, 32, 64);
+    NF_LoadSpritePal("palettes/Fire", 4);
+
+    NF_VramSpriteGfx( 0, 4, 4, true);
+    NF_VramSpritePal( 0, 4, 4);
+
+}
 void InitBackgrounds()
 {
     NF_InitTiledBgSys(0);   
@@ -149,13 +159,12 @@ void InitBombs()
     
 }
 
-void InitFire()
+void InitHazards()
 {
-    //Fire 1: 32
-    //Fire 2: 208
-
     nonCollectables.push_back( new Fire( Vector2(32, 0) ) );
     nonCollectables.push_back( new Fire( Vector2(208, 0) ) );
+    nonCollectables.push_back( new Explosion( 32, nonCollectables.at(0)  ) );
+    nonCollectables.push_back( new Explosion( 192, nonCollectables.at(1) ) );
 }
 
 void InitScore()
@@ -297,20 +306,8 @@ void UpdateSplash()
 {
     scanKeys();
     int held = keysHeld();
-    
+
     // Check leave state
-
-    //POS 1
-    //X1:32
-    //X2:32
-    //Y1: tanto faz (20)
-    //Y2: 64
-
-    //POS 2
-    //X1:192
-    //X2: 224
-    //Y1: tanto faz (20)
-    //Y2: 64
     if( held & KEY_START )
     {
         timerStart(0,ClockDivider_1024, TIMER_FREQ_1024(2) , []() {SpawnSpike;SpawnCoin;});
@@ -415,12 +412,12 @@ int main(void)
 {
     srand(time(NULL)); //Initiate random seed
 
-
     InitConsole();
     player->LoadSprite();
     InitWallSprites();
     InitCoinSprites();
     InitSpikeSprites();
+    InitFireSprites();
     InitText();
 
     InitBackgrounds();
@@ -430,7 +427,7 @@ int main(void)
     InitCoins();
     InitSpikes();
     InitBombs();
-    InitFire();
+    InitHazards();
 
     Wall *wallL = new Wall(true);  //Create left wall
     Wall *wallR = new Wall(false); //Create right wall

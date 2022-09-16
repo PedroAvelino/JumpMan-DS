@@ -27,4 +27,7 @@ private:
     float speed;
     float startX;
 
+public:
+    bool endTravel;
+
 };

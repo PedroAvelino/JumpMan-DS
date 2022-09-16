@@ -3,7 +3,7 @@
 #include "GameScore.hpp"
 
 Fire::Fire( const Vector2& p_spawnPos )
-:speed(2)
+:speed(2),endTravel(false)
 {
     pos = p_spawnPos;
     startX = pos.x;
@@ -42,6 +42,7 @@ void Fire::Destroy()
 {
     NF_ShowSprite(0,spriteID, false);
     active = false;
+    endTravel = false;
 }
 
 void Fire::TravelToOrigin()
@@ -52,6 +53,7 @@ void Fire::TravelToOrigin()
         pos.x += speed;
         if( pos.x >= startX )
         {
+            endTravel = true;
             Destroy();
             return;
         }
@@ -61,6 +63,7 @@ void Fire::TravelToOrigin()
         pos.x -= speed;
         if( pos.x <= startX )
         {
+            endTravel = true;
             Destroy();
             return;
         }

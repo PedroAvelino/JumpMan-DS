@@ -2,29 +2,28 @@
 #include <nds.h>
 #include <stdio.h>
 
-#include "Entity.hpp"
+#include "Collectable.hpp"
 #include "Boxxy.hpp"
 
-class Entity;
-class Explosion : public Entity
+class Collectable;
+class Explosion : public Collectable
 {
  
 public:
-    Explosion( float m_X );
+    Explosion( float m_X, Collectable* p_TargetFire );
     ~Explosion();
 
 public:
-    void CheckCollision( Collectable* p_entity);
     void SetActive( float m_Y );
 
 public:
     virtual void Draw() override;
     virtual void Update() override;
-    virtual void LoadSprite() override;
     virtual int ClassType() override;
 private:
     float explosionDuration;
     float currentExplositionDuration;
     bool isLeftWall;
 
+    Collectable* targetFire;
 };
