@@ -41,7 +41,8 @@ int spikeDelay = 8;
 bool shouldUpdateFire = false;
 
 std::vector<Collectable *> entities;
-std::vector<Collectable *> nonCollectables;
+std::vector<Fire *> fireProjectiles;
+std::vector<Explosion *> explosionList;
 
 
 
@@ -161,10 +162,10 @@ void InitBombs()
 
 void InitHazards()
 {
-    nonCollectables.push_back( new Fire( Vector2(32, 0) ) );
-    nonCollectables.push_back( new Fire( Vector2(208, 0) ) );
-    nonCollectables.push_back( new Explosion( 32, nonCollectables.at(0)  ) );
-    nonCollectables.push_back( new Explosion( 192, nonCollectables.at(1) ) );
+    explosionList.push_back( new Explosion( 32 ) );
+    explosionList.push_back( new Explosion( 192 ) );
+    fireProjectiles.push_back( new Fire( Vector2(32, 0), explosionList.at(0) ) );
+    fireProjectiles.push_back( new Fire( Vector2(208, 0), explosionList.at(1) ) );
 }
 
 void InitScore()
@@ -346,11 +347,11 @@ void UpdateInGame()
         }
     }
 
-    //Prepare fire
+    ///////////Prepare fire
     if( GameScore::GetInstance().createFire )
     {
         shouldUpdateFire = true;
-        for (auto i : nonCollectables)
+        for (auto i : fireProjectiles)
         {
             if ( i->IsActive() ) continue;
 
@@ -364,7 +365,7 @@ void UpdateInGame()
     if( shouldUpdateFire )
     {
         int firesDone = 0;
-        for ( auto n : nonCollectables )
+        for ( auto n : fireProjectiles )
         {
             if( n->IsActive() == false )
             {
@@ -384,6 +385,13 @@ void UpdateInGame()
             shouldUpdateFire = false;
             GameScore::GetInstance().isFireOn = false;
         }
+    }
+
+
+    for (auto i : explosionList)
+    {
+        i->Update();
+        i->Draw();
     }
 
     UpdateScore();
@@ -429,8 +437,6 @@ int main(void)
     InitBombs();
     InitHazards();
 
-    Wall *wallL = new Wall(true);  //Create left wall
-    Wall *wallR = new Wall(false); //Create right wall
 
 
 
@@ -454,13 +460,12 @@ int main(void)
     }
 
     delete player;
-    delete wallL;
-    delete wallR;
+
     for (auto e : entities)
     {
         delete e;
     }
-    for (auto e : nonCollectables)
+    for (auto e : fireProjectiles)
     {
         delete e;
     }

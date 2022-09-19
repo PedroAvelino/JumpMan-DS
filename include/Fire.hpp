@@ -5,13 +5,14 @@
 
 #include "Collectable.hpp"
 #include "GarlicMath.hpp"
+#include "Explosion.hpp"
 
 class Collectable;
 
 class Fire : public Collectable
 {
 public:
-    Fire( const Vector2& p_spawnPos );
+    Fire( const Vector2& p_spawnPos, Explosion* m_explosion );
     ~Fire();
 public:
     virtual void Draw() override;
@@ -30,4 +31,6 @@ private:
 public:
     bool endTravel;
 
+private:
+    Explosion* explosion;
 };

@@ -1,11 +1,13 @@
 #include "Fire.hpp"
 #include "SpriteIDServer.hpp"
 #include "GameScore.hpp"
+#include "Explosion.hpp"
 
-Fire::Fire( const Vector2& p_spawnPos )
+Fire::Fire( const Vector2& p_spawnPos, Explosion* m_explosion )
 :speed(2),endTravel(false)
 {
     pos = p_spawnPos;
+    explosion = m_explosion;
     startX = pos.x;
     size.x = 16.0f;
     size.y = 16.0f;
@@ -53,7 +55,7 @@ void Fire::TravelToOrigin()
         pos.x += speed;
         if( pos.x >= startX )
         {
-            endTravel = true;
+            explosion->SetActive(pos.y);
             Destroy();
             return;
         }
@@ -63,7 +65,7 @@ void Fire::TravelToOrigin()
         pos.x -= speed;
         if( pos.x <= startX )
         {
-            endTravel = true;
+            explosion->SetActive(pos.y);
             Destroy();
             return;
         }

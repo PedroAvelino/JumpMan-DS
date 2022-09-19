@@ -1,23 +1,21 @@
 #include "Explosion.hpp"
 #include "SpriteIDServer.hpp"
 #include "GameScore.hpp"
-#include <time.h>
 
-Explosion::Explosion( float m_X, Collectable* p_TargetFire ) : 
-explosionDuration(2.0f), currentExplositionDuration(0.0f)
+Explosion::Explosion( float m_X ) : 
+explosionDuration(45), currentExplositionDuration(0)
 {
     size.x = 32.0f;
     size.y = 64.0f;
     
     pos.x = m_X;
-    targetFire = p_TargetFire;
 
-    active = true;
+    active = false;
     spriteID = SpriteIDServer::GetInstance().GetID();
 
     //Create it and then hide it
     NF_CreateSprite(0,spriteID,4,4, pos.x, pos.y);
-    NF_ShowSprite(0,spriteID, true);
+    NF_ShowSprite(0,spriteID, false);
 }
 int Explosion::ClassType()
 {
@@ -26,18 +24,22 @@ int Explosion::ClassType()
 
 void Explosion::SetActive( float m_Y )
 {
-    pos.y = m_Y;
+    if( active ) return;
+
+    pos.y = (m_Y - (size.y / 2) );
     active = true;
     currentExplositionDuration = explosionDuration;
 }
 
 void Explosion::Update()
 {
-    if( targetFire == nullptr ) return;
-
-    if( targetFire->IsActive() )
+    if( active )
     {
-        pos.y = (targetFire->pos.y - (size.y / 2) );
+        currentExplositionDuration -= 1;
+        if( currentExplositionDuration <= 0 )
+        {
+            Destroy();
+        }
     }
 
 }
@@ -49,4 +51,10 @@ void Explosion::Draw()
         NF_ShowSprite(0,spriteID, true);
         NF_MoveSprite(0,spriteID,pos.x,pos.y);
     }
+}
+
+void Explosion::Destroy()
+{
+    NF_ShowSprite(0,spriteID, false);
+    active = false;
 }

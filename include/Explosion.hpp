@@ -10,7 +10,7 @@ class Explosion : public Collectable
 {
  
 public:
-    Explosion( float m_X, Collectable* p_TargetFire );
+    Explosion( float m_X );
     ~Explosion();
 
 public:
@@ -20,10 +20,9 @@ public:
     virtual void Draw() override;
     virtual void Update() override;
     virtual int ClassType() override;
+    virtual void Destroy() override;
 private:
-    float explosionDuration;
-    float currentExplositionDuration;
+    int explosionDuration;
+    int currentExplositionDuration;
     bool isLeftWall;
-
-    Collectable* targetFire;
 };
