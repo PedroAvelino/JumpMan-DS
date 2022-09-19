@@ -437,9 +437,6 @@ int main(void)
     InitBombs();
     InitHazards();
 
-
-
-
     while (1)
     {
         //           """State Machine"""
@@ -466,6 +463,10 @@ int main(void)
         delete e;
     }
     for (auto e : fireProjectiles)
+    {
+        delete e;
+    }
+    for (auto e : explosionList)
     {
         delete e;
     }

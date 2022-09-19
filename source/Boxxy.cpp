@@ -3,14 +3,13 @@
 #include "SpriteIDServer.hpp"
 
 Boxxy::Boxxy()
-:speed(3.0), isLeftWall(true),state(BoxxyState::Left), isJumping(false)
+:speed(3.0), isLeftWall(true),state(BoxxyState::Left), isJumping(false),yVelocity(0)
 {
     pos.x = 28;
     pos.y = 150;
 
     size.x = 28.0f;
     size.y = 28.0f;
-
     active = false;
 }
 
@@ -29,7 +28,6 @@ void Boxxy::LoadSprite()
 
 //=================================================================
 //=================================================================
-
 void Boxxy::Draw()
 {
     if( active )
@@ -46,8 +44,12 @@ void Boxxy::Move( const Vector2& p_direction )
     Vector2 direction;
     direction = p_direction;
 
-    VectorScale(direction, direction, isJumping ? speed *2 : speed);
+    VectorScale(direction, direction, isJumping && yVelocity == 0 ? speed *2 : speed); //Creating the velocity
 
+    if( pos.y + direction.y > ( 192 - size.y ) || pos.y + direction.y < 0 )
+    {
+        direction.y = 0;
+    }
     VectorAdd( pos, pos, direction );
 }
 
@@ -76,16 +78,24 @@ void Boxxy::Update()
     {
         if( isJumping == false && pos.y > 0 )
         {
+            yVelocity = -1;
             Move(Vector2(0.0, -1.0));
         }
     }
-
     //Down
-    if( held & KEY_DOWN )
+    else if( held & KEY_DOWN )
     {
         if( isJumping == false  && pos.y < ( 192 - size.y ) )
         {
+            yVelocity = 1;
             Move(Vector2(0.0, 1.0));
+        }
+    }
+    else
+    {
+        if( isJumping == false )
+        {
+            yVelocity = 0;
         }
     }
 
@@ -95,11 +105,11 @@ void Boxxy::Update()
     {
         if( isLeftWall )
         {
-            Move( Vector2(1.0, 0.0) );
+            Move( Vector2(1.0, yVelocity) );
         }
         else
         {
-            Move( Vector2(-1.0, 0.0) );
+            Move( Vector2(-1.0, yVelocity) );
         }
     }
 }

@@ -43,5 +43,6 @@ private:
     bool isLeftWall;
     BoxxyState state;
     bool isJumping;
+    int yVelocity;
 
 };
