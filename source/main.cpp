@@ -110,13 +110,33 @@ void InitSpikeSprites()
     NF_VramSpritePal(0, 3, 3);
 
 }
-void InitFireSprites()
+void InitExplosionSprites()
 {
-    NF_LoadSpriteGfx("sprite/Fire", 4, 32, 64);
-    NF_LoadSpritePal("palettes/Fire", 4);
+    NF_LoadSpriteGfx("sprite/Explosion", 4, 32, 64);
+    NF_LoadSpritePal("palettes/Explosion", 4);
 
     NF_VramSpriteGfx( 0, 4, 4, true);
     NF_VramSpritePal( 0, 4, 4);
+
+}
+
+void InitBombSprites()
+{
+    NF_LoadSpriteGfx("sprite/Bomb", 5, 16, 16);
+    NF_LoadSpritePal("palettes/Bomb", 5);
+
+    NF_VramSpriteGfx( 0, 5, 5, false);
+
+    NF_VramSpritePal( 0, 5, 5);
+}
+void InitFireSprites()
+{
+    NF_LoadSpriteGfx("sprite/Fire", 6, 16, 16);
+    NF_LoadSpritePal("palettes/Fire", 6);
+
+    
+    NF_VramSpriteGfx( 0, 6, 6, true);
+    NF_VramSpritePal( 0, 6, 6);
 
 }
 void InitBackgrounds()
@@ -425,6 +445,8 @@ int main(void)
     InitWallSprites();
     InitCoinSprites();
     InitSpikeSprites();
+    InitExplosionSprites();
+    InitBombSprites();
     InitFireSprites();
     InitText();
 

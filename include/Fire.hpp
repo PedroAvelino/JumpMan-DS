@@ -33,4 +33,5 @@ public:
 
 private:
     Explosion* explosion;
+    int rotationProgress;
 };

@@ -48,8 +48,9 @@ void Boxxy::Move( const Vector2& p_direction )
 
     if( pos.y + direction.y > ( 192 - size.y ) || pos.y + direction.y < 0 )
     {
-        direction.y = 0;
+        yVelocity *= -1;
     }
+
     VectorAdd( pos, pos, direction );
 }
 

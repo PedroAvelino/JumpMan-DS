@@ -26,6 +26,8 @@ private:
 private:
     float speed;
     float heightToExplode;
+    int animationFrame;
+    int animationProgress;
 
 };
 

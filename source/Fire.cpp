@@ -3,8 +3,10 @@
 #include "GameScore.hpp"
 #include "Explosion.hpp"
 
+#define ROTATION_RATE 30
+
 Fire::Fire( const Vector2& p_spawnPos, Explosion* m_explosion )
-:speed(2),endTravel(false)
+:speed(2),endTravel(false),rotationProgress(-512)
 {
     pos = p_spawnPos;
     explosion = m_explosion;
@@ -16,7 +18,7 @@ Fire::Fire( const Vector2& p_spawnPos, Explosion* m_explosion )
     spriteID = SpriteIDServer::GetInstance().GetID();
 
     //Create it and then hide it
-    NF_CreateSprite(0,spriteID,2,2, pos.x, pos.y);
+    NF_CreateSprite(0,spriteID,6,6, pos.x, pos.y);
     NF_ShowSprite(0,spriteID, false);
 }
 
@@ -31,6 +33,14 @@ void Fire::Draw()
     {
         NF_ShowSprite(0,spriteID, true);
         NF_MoveSprite(0,spriteID,pos.x,pos.y);
+        NF_EnableSpriteRotScale(0,spriteID, 12, false );
+
+        rotationProgress += ROTATION_RATE;
+        if (rotationProgress >= 512 ) 
+        {
+            rotationProgress = -512;
+        }
+        NF_SpriteRotScale(0,12, rotationProgress ,256,256);
     }
 }
 
